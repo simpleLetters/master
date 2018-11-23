@@ -1,0 +1,13 @@
+body{
+            background-color: #eee;
+}
+.login_content{
+    margin-top: 200px;
+}
+
+.error_info{
+    color: red;
+}
+.report_user,.report_time,.report_comment,.report_up{
+    margin-right: 20px;
+}
