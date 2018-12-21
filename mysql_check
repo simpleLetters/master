@@ -1,0 +1,82 @@
+#!/bin/bash
+# Date:        2018/01/0
+# Author:      SakuraGaara
+# Email:       mic0601@163.com
+# Description: 
+# Notes:       
+# 用户名
+MYSQL_USER="root"
+# 密码
+MYSQL_PWD='513692' 
+# 主机地址/
+IPMYSQL_HOST='127.0.0.1' 
+# 端口
+MYSQL_PORT='3306' 
+# 数据连接
+#MYSQL_CONN="/usr/bin/mysqladmin  -u ${MYSQL_USER} -h ${MYSQL_HOST} -P ${MYSQL_PORT}  extended-status"
+MYSQL_CONN="/usr/bin/mysqladmin -uroot -p513692 "
+#MYSQL_CONN="/usr/bin/mysqladmin  -u ${MYSQL_USER} -h ${MYSQL_HOST}  -p ${MYSQL_PWD}"
+#echo $?MYSQL_CONN
+
+# 参数是否正确
+if [ $# -ne "1" ];then 
+    echo "arg error!" 
+fi 
+# 获取数据
+
+case $1 in 
+  Uptime) 
+        #result=`${MYSQL_CONN} status|cut -f2 -d":"|cut -f1 -d"T"` 
+        result=`${MYSQL_CONN}  extended-status 2>/dev/null|grep  " Uptime" |head -1 | grep "^|"|awk -F "|" '{print $3}'|tail -1` 
+        echo $result 
+        ;; 
+  Com_update) 
+        result=`${MYSQL_CONN} extended-status 2>/dev/null|grep -w "Com_update"|head -1|grep "^|"|awk -F "|" '{print $3}'` 
+        echo $result 
+        ;;
+  Slow_queries) 
+        result=`${MYSQL_CONN} extended-status 2>/dev/null|grep  "Slow_queries"|head -1|grep "^|"|awk -F "|" '{print $3}'`
+        echo $result 
+        ;; 
+   Com_select) 
+        result=`${MYSQL_CONN} extended-status 2>/dev/null|grep  " Com_select"|head -1|grep "^|"|awk -F "|" '{print $3}'` 
+        #echo $result 
+                ;; 
+  Com_rollback)   
+      result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Com_rollback"|cut -d"|" -f3`                
+	 echo $result                 
+	;; 
+
+   Questions) 
+        result=`${MYSQL_CONN} status 2>/dev/null|cut -f4 -d":"|cut -f1 -d"S"` 
+                echo $result 
+                ;; 
+   Com_insert)        
+	 result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Com_insert"|cut -d"|" -f3`                 
+	  echo $result
+	;; 
+  Com_delete)        
+	 result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Com_delete"|cut -d"|" -f3`                 
+	 echo $result                 
+	;;     
+  Com_commit)        
+	 result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Com_commit"|cut -d"|" -f3`                 
+	 echo $result                 
+	;;     
+  Bytes_sent)         
+	result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Bytes_sent" |cut -d"|" -f3`                 	
+	echo $result                 
+	;;     
+Bytes_received)         
+	result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Bytes_received" |cut -d"|" -f3`                 
+	echo $result                
+	 ;;     
+Com_begin)         
+	result=`${MYSQL_CONN} extended-status 2>/dev/null |grep -w "Com_begin"|cut -d"|" -f3`                 	
+	echo $result                 
+;;                                 
+*)         
+echo "Usage:$0(Uptime|Com_update|Slow_queries|Com_select|Com_rollback|Questions|Com_insert|Com_delete|Com_commit|Bytes_sent|Bytes_received|Com_begin)"       
+  ;; 
+esac
+
